@@ -210,10 +210,9 @@ namespace Scopa {
                     var plane = face.Plane;
                     face.Plane = new System.Numerics.Plane(new System.Numerics.Vector3(plane.Normal.X, plane.Normal.Z, plane.Normal.Y), plane.D);
                     
-                    var direction = ScopaMesh.GetMainAxisToNormal(face.Plane.Normal.ToUnity());
-                    face.UAxis = direction == ScopaMesh.Axis.X ? System.Numerics.Vector3.UnitZ : System.Numerics.Vector3.UnitX;
-                    face.VAxis = direction == ScopaMesh.Axis.Y ? -System.Numerics.Vector3.UnitZ : -System.Numerics.Vector3.UnitY;
-
+                    face.UAxis = new System.Numerics.Vector3(face.UAxis.X, face.UAxis.Z, face.UAxis.Y);
+                    face.VAxis = new System.Numerics.Vector3(face.VAxis.X, face.VAxis.Z, face.VAxis.Y);
+                    
                     face.TextureName = face.TextureName.ToLowerInvariant();
 
                     // var center = face.Vertices.Aggregate(System.Numerics.Vector3.Zero, (x, y) => x + y) / face.Vertices.Count;
