@@ -14,6 +14,10 @@ using UnityEditor;
 using Debug = UnityEngine.Debug;
 #endif
 
+#if (USING_URP || USING_HDRP)
+using UnityEngine.Rendering;
+#endif
+
 namespace Scopa {
     /// <summary> main class for WAD import and export </summary>
     public static class ScopaWad {
@@ -110,34 +114,53 @@ namespace Scopa {
         }
 
         public static Material GenerateMaterialOpaque( ScopaWadConfig config ) {
-            // TODO: URP, HDRP
+            // TODO: HDRP
             Material material;
 
             if ( config.opaqueTemplate != null ) {
                 material = new Material(config.opaqueTemplate);
             }
             else {
+                #if USING_URP
+                material = new Material(Shader.Find("Universal Render Pipeline/Lit"));
+                material.SetFloat("_Smoothness", 0.1f);
+                #else
                 material = new Material(Shader.Find("Standard"));
                 material.SetFloat("_Glossiness", 0.1f);
+                #endif
             }
 
             return material;
         }
 
         public static Material GenerateMaterialAlpha( ScopaWadConfig config ) {
-			// TODO: URP, HDRP
+			// TODO: HDRP
 			Material material;
 
 			if ( config.alphaTemplate != null ) {
 				material = new Material(config.alphaTemplate);
 			}
 			else {
+                #if USING_URP
+                material = new Material(GraphicsSettings.defaultRenderPipeline.defaultShader);
+                material.EnableKeyword("_SURFACE_TYPE_TRANSPARENT");
+                material.SetFloat("_Smoothness", 0.1f);
+                material.SetFloat("_Surface", 1.0f);
+                material.SetFloat("_Blend", 1.0f);
+                material.SetFloat("_SrcBlend", (int)BlendMode.One);
+                material.SetFloat("_DstBlend", (int)BlendMode.OneMinusSrcAlpha);
+                material.SetFloat("_ZWrite", 0);
+                material.EnableKeyword("_ALPHATEST_ON");
+                material.EnableKeyword("_ALPHAPREMULTIPLY_ON");
+                material.renderQueue = (int)RenderQueue.Transparent;
+                #else
 				material = new Material(Shader.Find("Standard"));
 				material.SetFloat("_Glossiness", 0.1f);
 				material.SetFloat("_Mode", 1);
 				material.EnableKeyword("_ALPHATEST_ON");
 				material.EnableKeyword("_ALPHAPREMULTIPLY_ON");
 				material.renderQueue = 2450;
+                #endif
 			}
 
             return material;
