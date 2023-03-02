@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Numerics;
 using System.Text;
 using Sledge.Formats.Map.Objects;
@@ -223,7 +224,7 @@ namespace Sledge.Formats.Map.Formats
             {
                 while (it.Current?.Is(TokenType.Whitespace) == false)
                 {
-                    face.TextureName = it.Current.Value;
+                    face.TextureName += it.Current.Value;
                     it.MoveNext();
                 }
                 Expect(it, TokenType.Whitespace, " ");
